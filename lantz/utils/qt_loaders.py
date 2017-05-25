@@ -102,6 +102,11 @@ def loaded_api():
             return QT_API_PYQT
         else:
             return QT_API_PYQTv1
+    if 'PyQt5.QtCore' in sys.modules:
+        if qtapi_version() == 2:
+            return QT_API_PYQT
+        else:
+            return QT_API_PYQTv1
     elif 'PySide.QtCore' in sys.modules:
         return QT_API_PYSIDE
     return None
@@ -129,7 +134,7 @@ def has_binding(api):
 
     module_name = {QT_API_PYSIDE: 'PySide',
                    QT_API_PYQT: 'PyQt4',
-                   QT_API_PYQTv1: 'PyQt4',
+                   QT_API_PYQTv1: 'PyQt5',
                    QT_API_PYQT_DEFAULT: 'PyQt4'}
     module_name = module_name[api]
 
@@ -384,7 +389,7 @@ def load_qt(api_options):
     """
     loaders = {QT_API_PYSIDE: import_pyside,
                QT_API_PYQT: import_pyqt4,
-               QT_API_PYQTv1: partial(import_pyqt4, version=1),
+               QT_API_PYQTv1: partial(import_pyqt5, version=1),
                QT_API_PYQT_DEFAULT: partial(import_pyqt4, version=None),
                QT_MOCK: import_qtmock
                }
@@ -413,9 +418,11 @@ def load_qt(api_options):
 
     Currently-imported Qt library:   %r
     PyQt4 installed:                 %s
+    PyQt5 installed:                 %s
     PySide >= 1.0.3 installed:       %s
     Tried to load:                   %r
     """ % (loaded_api(),
            has_binding(QT_API_PYQT),
+           has_binding(QT_API_PYQTv1),
            has_binding(QT_API_PYSIDE),
            api_options))
